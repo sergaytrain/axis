@@ -6,7 +6,7 @@
     <title>Axis · переосмысление общения</title>
     <!-- Современные шрифты -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome 6 (иконки) -->
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* ---------- СБРОС И ПЕРЕМЕННЫЕ ---------- */
@@ -45,6 +45,102 @@
             overflow-x: hidden;
         }
 
+        /* ---------- ПРЕЛОАДЕР (ПОВЕРХ ВСЕГО) ---------- */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #030608;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0,247,255,0.1) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(199,125,255,0.08) 0%, transparent 45%),
+                radial-gradient(circle at 40% 90%, rgba(255,94,156,0.06) 0%, transparent 50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        .preloader-hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .preloader-content {
+            text-align: center;
+            animation: fadeInUp 1s ease;
+        }
+
+        .preloader-logo {
+            font-family: var(--font-hero);
+            font-size: clamp(5rem, 15vw, 8rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: white;
+            text-shadow: 
+                0 0 20px var(--neon-cyan),
+                0 0 40px var(--neon-cyan),
+                0 0 80px var(--neon-purple),
+                0 0 120px rgba(179, 0, 255, 0.6);
+            animation: pulseLogo 2.2s infinite alternate;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes pulseLogo {
+            0% { text-shadow: 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-cyan), 0 0 60px var(--neon-purple), 0 0 100px rgba(179,0,255,0.5); }
+            100% { text-shadow: 0 0 30px var(--neon-cyan), 0 0 70px var(--neon-cyan), 0 0 100px var(--neon-purple), 0 0 150px rgba(179,0,255,0.8); }
+        }
+
+        .preloader-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            font-size: 1.4rem;
+            color: var(--neon-cyan);
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .preloader-dot {
+            width: 14px;
+            height: 14px;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--neon-cyan);
+            animation: preloaderPulse 1.6s infinite;
+        }
+
+        @keyframes preloaderPulse {
+            0%, 100% { opacity: 0.6; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.3); box-shadow: 0 0 30px var(--neon-cyan); }
+        }
+
+        .preloader-sub {
+            margin-top: 2rem;
+            color: rgba(192,212,221,0.8);
+            font-size: 1.1rem;
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .preloader-sub i {
+            color: var(--neon-pink);
+            animation: spin 4s infinite linear;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         /* ---------- АНИМИРОВАННЫЙ ФОН (ЧАСТИЦЫ) ---------- */
         .particles {
             position: fixed;
@@ -66,12 +162,11 @@
             animation: float 20s infinite linear;
         }
 
-        /* множество частиц */
-        .particle:nth-child(1) { top: 20%; left: 10%; width: 3px; height: 3px; animation-duration: 24s; animation-delay: 0s; }
+        .particle:nth-child(1) { top: 20%; left: 10%; width: 3px; height: 3px; animation-duration: 24s; }
         .particle:nth-child(2) { top: 70%; left: 80%; width: 2px; height: 2px; animation-duration: 30s; animation-delay: 2s; background: var(--neon-purple); box-shadow: 0 0 20px #b300ff; }
         .particle:nth-child(3) { top: 45%; left: 30%; width: 4px; height: 4px; animation-duration: 28s; animation-delay: 5s; background: var(--neon-pink); box-shadow: 0 0 25px #ff3b9e; }
         .particle:nth-child(4) { top: 15%; left: 70%; width: 2px; height: 2px; animation-duration: 22s; animation-delay: 1s; }
-        .particle:nth-child(5) { top: 85%; left: 20%; width: 3px; height: 3px; animation-duration: 26s; animation-delay: 4s; background: var(--neon-cyan); }
+        .particle:nth-child(5) { top: 85%; left: 20%; width: 3px; height: 3px; animation-duration: 26s; animation-delay: 4s; }
         .particle:nth-child(6) { top: 55%; left: 60%; width: 2px; height: 2px; animation-duration: 35s; animation-delay: 7s; background: var(--neon-purple); }
         .particle:nth-child(7) { top: 30%; left: 90%; width: 3px; height: 3px; animation-duration: 32s; animation-delay: 3s; background: var(--neon-pink); }
         .particle:nth-child(8) { top: 95%; left: 50%; width: 2px; height: 2px; animation-duration: 29s; animation-delay: 6s; }
@@ -85,7 +180,7 @@
             100% { transform: translateY(-120vh) translateX(20px); opacity: 0; }
         }
 
-        /* ---------- ДЕКОРАТИВНЫЕ ЛИНИИ (СЕТКА) ---------- */
+        /* ---------- ДЕКОРАТИВНАЯ СЕТКА ---------- */
         .grid-lines {
             position: fixed;
             top: 0;
@@ -106,8 +201,8 @@
             100% { background-position: 50px 50px; }
         }
 
-        /* ---------- ОСНОВНОЙ КОНТЕНТ (ПОВЕРХ ФОНА) ---------- */
-        main {
+        /* ---------- ОСНОВНОЙ КОНТЕНТ (ИЗНАЧАЛЬНО СКРЫТ) ---------- */
+        .main-content {
             position: relative;
             z-index: 10;
             max-width: 1400px;
@@ -118,9 +213,15 @@
             flex-direction: column;
             justify-content: center;
             backdrop-filter: blur(1px);
+            opacity: 0;
+            transition: opacity 1.2s ease;
         }
 
-        /* ---------- ГЕРОЙ (HELLO-BANNER) ---------- */
+        .main-content-visible {
+            opacity: 1;
+        }
+
+        /* ---------- ГЕРОЙ ---------- */
         .hero {
             display: flex;
             flex-direction: column;
@@ -165,7 +266,6 @@
             20%, 24%, 55% { opacity: 0.8; text-shadow: 0 0 5px #00f0ff, 0 0 10px #00f0ff, 0 0 20px #b300ff, 0 0 40px rgba(179,0,255,0.4); }
         }
 
-        /* Бейдж "In dev..." */
         .dev-badge {
             display: inline-flex;
             align-items: center;
@@ -187,11 +287,6 @@
         .dev-badge i {
             font-size: 1.4rem;
             animation: spin 4s infinite linear;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         .pulse-dot {
@@ -224,7 +319,6 @@
             text-shadow: 0 0 8px rgba(0,240,255,0.6);
         }
 
-        /* современная кнопка */
         .neon-btn {
             display: inline-flex;
             align-items: center;
@@ -264,7 +358,7 @@
             color: #000;
         }
 
-        /* ---------- БЛОК ЦИТАТЫ (FAKTS) ---------- */
+        /* ---------- БЛОК ЦИТАТЫ ---------- */
         .quote-block {
             background: rgba(5, 10, 18, 0.65);
             backdrop-filter: blur(16px);
@@ -285,7 +379,6 @@
             background: rgba(8, 15, 25, 0.75);
         }
 
-        /* большие кавычки */
         .quote-icon {
             position: absolute;
             top: 20px;
@@ -371,9 +464,9 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ---------- АДАПТАЦИЯ ПОД МОБИЛЬНЫЕ ---------- */
+        /* ---------- АДАПТАЦИЯ ---------- */
         @media (max-width: 768px) {
-            main { padding: 1rem; }
+            .main-content { padding: 1rem; }
             .hero { padding: 2rem 1.5rem; border-radius: 32px; }
             .quote-block { padding: 2rem 1.5rem; }
             .quote-block p { padding-left: 1rem; font-size: 1.2rem; }
@@ -384,13 +477,27 @@
             .hero h1 { font-size: 4.5rem; }
             .dev-badge { font-size: 1rem; padding: 0.4rem 1.2rem; }
         }
-
-        /* ---------- СОХРАНЯЕМ ИСХОДНЫЙ ТЕКСТ, НО В НОВОЙ ОБЁРТКЕ ---------- */
-        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; } /* на случай, если нужно скрыть старые классы, но мы их заменяем */
     </style>
 </head>
 <body>
-    <!-- Частицы (живой фон) -->
+    <!-- ПРЕЛОАДЕР -->
+    <div id="preloader" class="preloader">
+        <div class="preloader-content">
+            <div class="preloader-logo">Axis</div>
+            <div class="preloader-status">
+                <span class="preloader-dot"></span>
+                <span>загрузка протокола</span>
+                <span class="preloader-dot"></span>
+            </div>
+            <div class="preloader-sub">
+                <i class="fas fa-code-branch"></i>
+                <span>in dev...</span>
+                <i class="fas fa-code-branch"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЧАСТИЦЫ (фон) -->
     <div class="particles">
         <div class="particle"></div>
         <div class="particle"></div>
@@ -405,8 +512,8 @@
     </div>
     <div class="grid-lines"></div>
 
-    <main>
-        <!-- Секция HERO — полная переработка hello-banner с сохранением текста -->
+    <!-- ОСНОВНОЙ КОНТЕНТ (ИЗНАЧАЛЬНО СКРЫТ) -->
+    <main id="main-content" class="main-content">
         <section class="hero">
             <h1>Axis</h1>
             <div class="dev-badge">
@@ -414,21 +521,17 @@
                 <span>in dev...</span>
                 <i class="fas fa-code-branch"></i>
             </div>
-            <!-- Оригинальная фраза, но усиленная -->
             <p>
                 <strong>Мессенджер,</strong> который возможно изменит будущее.
             </p>
-            <!-- Кнопка для "живого" отклика (просто красота) -->
             <a href="in-dev.html" class="neon-btn">
                 <span>Стать первым</span>
                 <i class="fas fa-arrow-right"></i>
             </a>
         </section>
 
-        <!-- Секция ЦИТАТА — fakts в современном прочтении -->
         <section class="quote-block">
             <div class="quote-icon">“</div>
-            <!-- Полностью сохранённый текст из .fakts -->
             <p>
                 «Кажется, будто право выбирать подменяется предложением чего-то, что можно охарактеризовать лишь как говно, совершенно не вписывающееся в нормальную жизнь... Создается впечатление, что Россию аккуратно, шаг за шагом, адаптируют под реалии, свойственные Северной Корее.»
             </p>
@@ -436,13 +539,11 @@
                 <i class="fas fa-user-secret"></i>
                 <span>из дневников разработчика</span>
             </div>
-            <!-- Нижняя метка Axis in dev... (из оригинального h1 внутри fakts) -->
             <div class="axis-dev-label">
                 <i class="fas fa-cogs"></i> Axis in dev...
             </div>
         </section>
 
-        <!-- Подвал для завершённости -->
         <footer>
             <p>
                 <i class="fas fa-bolt"></i> Axis — прототип будущего мессенджера <i class="fas fa-bolt"></i>
@@ -453,21 +554,50 @@
         </footer>
     </main>
 
-    <!-- Небольшой скрипт для дополнительной "живости": параллакс частиц (опционально) -->
     <script>
         (function() {
-            // Простейший эффект движения частиц за курсором — делает фон ещё живее
-            document.addEventListener('mousemove', function(e) {
-                const particles = document.querySelectorAll('.particle');
-                const x = e.clientX / window.innerWidth;
-                const y = e.clientY / window.innerHeight;
-                particles.forEach((p, i) => {
-                    const speed = 15 + i * 2;
-                    const moveX = (x - 0.5) * speed;
-                    const moveY = (y - 0.5) * speed;
-                    p.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            // ПАРАЛЛАКС ДЛЯ ЧАСТИЦ
+            function initParallax() {
+                document.addEventListener('mousemove', function(e) {
+                    const particles = document.querySelectorAll('.particle');
+                    const x = (e.clientX / window.innerWidth - 0.5) * 20;
+                    const y = (e.clientY / window.innerHeight - 0.5) * 20;
+                    particles.forEach((p, index) => {
+                        p.style.transform = `translate(${x * (index%3 + 1)}px, ${y * (index%3 + 1)}px)`;
+                    });
                 });
-            });
+            }
+
+            // УПРАВЛЕНИЕ ПРЕЛОАДЕРОМ
+            function initPreloader() {
+                const preloader = document.getElementById('preloader');
+                const mainContent = document.getElementById('main-content');
+
+                // Минимальное время показа прелоадера — 2 секунды (для комфортного восприятия)
+                const minDisplayTime = 2000; // 2 секунды
+                const startTime = Date.now();
+
+                function hidePreloader() {
+                    const elapsed = Date.now() - startTime;
+                    const delay = Math.max(0, minDisplayTime - elapsed);
+
+                    setTimeout(() => {
+                        preloader.classList.add('preloader-hidden');
+                        mainContent.classList.add('main-content-visible');
+                    }, delay);
+                }
+
+                // Ждём полной загрузки страницы + ещё чуть-чуть
+                window.addEventListener('load', hidePreloader);
+
+                // На случай, если load уже произошёл (маловероятно, но добавим fallback)
+                if (document.readyState === 'complete') {
+                    hidePreloader();
+                }
+            }
+
+            initParallax();
+            initPreloader();
         })();
     </script>
 </body>
