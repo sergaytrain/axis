@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axis · 404 — сигнал потерян</title>
+    <!-- те же шрифты и иконки, что и в основном дизайне -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ---------- СБРОС И ПЕРЕМЕННЫЕ (полностью совместимо с предыдущими страницами) ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-deep: #06090c;
+            --bg-panel: rgba(8, 18, 26, 0.7);
+            --neon-cyan: #00f7ff;
+            --neon-purple: #c77dff;
+            --neon-pink: #ff5e9c;
+            --glass-edge: rgba(0, 247, 255, 0.2);
+            --text-bright: #f0fcff;
+            --text-soft: #c0d4dd;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-main: 'Inter', sans-serif;
+            --transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1);
+        }
+
+        body {
+            background-color: #030608;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0,247,255,0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(199,125,255,0.07) 0%, transparent 45%),
+                radial-gradient(circle at 40% 90%, rgba(255,94,156,0.05) 0%, transparent 50%);
+            font-family: var(--font-main);
+            color: var(--text-bright);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ---------- ЧАСТИЦЫ (та же анимация дрифта) ---------- */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--neon-cyan), 0 0 30px #0099ff;
+            animation: drift 22s infinite linear;
+            opacity: 0.4;
+        }
+
+        .particle:nth-child(1) { top: 15%; left: 8%; width: 4px; height: 4px; animation-duration: 26s; }
+        .particle:nth-child(2) { top: 80%; left: 75%; background: var(--neon-purple); box-shadow: 0 0 25px var(--neon-purple); animation-duration: 30s; animation-delay: 3s; }
+        .particle:nth-child(3) { top: 45%; left: 25%; background: var(--neon-pink); box-shadow: 0 0 25px var(--neon-pink); animation-duration: 28s; animation-delay: 1s; }
+        .particle:nth-child(4) { top: 70%; left: 15%; animation-duration: 35s; }
+        .particle:nth-child(5) { top: 25%; left: 85%; background: var(--neon-purple); animation-duration: 32s; animation-delay: 5s; }
+        .particle:nth-child(6) { top: 90%; left: 45%; background: var(--neon-pink); animation-duration: 29s; }
+        .particle:nth-child(7) { top: 10%; left: 55%; animation-duration: 40s; }
+        .particle:nth-child(8) { top: 60%; left: 92%; width: 2px; height: 2px; animation-duration: 33s; }
+        .particle:nth-child(9) { top: 35%; left: 40%; width: 4px; height: 4px; animation-duration: 27s; }
+        .particle:nth-child(10) { top: 50%; left: 60%; animation-duration: 38s; }
+
+        @keyframes drift {
+            0% { transform: translateY(0) translateX(0); opacity: 0.1; }
+            20% { opacity: 0.7; }
+            80% { opacity: 0.5; }
+            100% { transform: translateY(-120vh) translateX(30px); opacity: 0; }
+        }
+
+        /* ---------- СЕТКА (техно-стиль) ---------- */
+        .tech-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0,247,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,247,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* ---------- ОСНОВНОЙ КОНТЕНТ (ВЫСОКИЙ Z-INDEX) ---------- */
+        main {
+            position: relative;
+            z-index: 20;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(2px);
+        }
+
+        /* ---------- ГЛАВНЫЙ БЛОК 404 ---------- */
+        .error-container {
+            background: rgba(5, 14, 22, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 247, 255, 0.25);
+            border-radius: 64px;
+            padding: 4rem 4rem 4.5rem;
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 0 60px rgba(0, 247, 255, 0.1);
+            animation: fadeIn 1s ease;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .error-container:hover {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 80px rgba(199, 125, 255, 0.25);
+        }
+
+        /* неоновый 404 */
+        .error-code {
+            font-family: var(--font-display);
+            font-size: clamp(7rem, 20vw, 12rem);
+            font-weight: 800;
+            line-height: 1;
+            color: white;
+            text-shadow: 
+                0 0 15px var(--neon-cyan),
+                0 0 30px var(--neon-cyan),
+                0 0 60px var(--neon-purple),
+                0 0 120px rgba(199,125,255,0.6);
+            animation: glitch 3s infinite alternate, flicker 5s infinite;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.03em;
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: skew(0deg, 0deg); opacity: 1; }
+            95% { transform: skew(5deg, -2deg); opacity: 0.9; text-shadow: 0 0 20px var(--neon-cyan), 0 0 50px var(--neon-purple), 0 0 100px var(--neon-pink); }
+            96% { transform: skew(-5deg, 3deg); }
+            97% { transform: skew(3deg, -1deg); }
+        }
+
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+            20%, 24%, 55% { opacity: 0.7; text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-purple); }
+        }
+
+        .error-title {
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            font-weight: 600;
+            font-family: var(--font-display);
+            margin-top: 0.5rem;
+            margin-bottom: 1.2rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .error-title i {
+            color: var(--neon-pink);
+            text-shadow: 0 0 15px var(--neon-pink);
+            animation: pulseIcon 2s infinite;
+        }
+
+        @keyframes pulseIcon {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.2); opacity: 1; text-shadow: 0 0 30px var(--neon-pink); }
+        }
+
+        .error-message {
+            font-size: 1.3rem;
+            color: var(--text-soft);
+            max-width: 600px;
+            margin: 1.8rem auto;
+            font-weight: 300;
+            backdrop-filter: blur(2px);
+            padding: 0 1rem;
+        }
+
+        .error-message strong {
+            color: var(--neon-cyan);
+            font-weight: 600;
+            text-shadow: 0 0 5px rgba(0,247,255,0.5);
+        }
+
+        /* ---------- СТАТУС-БАР (как на in-dev) ---------- */
+        .signal-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(0, 247, 255, 0.05);
+            border: 1px solid rgba(0, 247, 255, 0.4);
+            border-radius: 60px;
+            padding: 0.6rem 1.8rem;
+            margin: 0.8rem 0 1.5rem;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            color: var(--neon-cyan);
+            text-transform: uppercase;
+        }
+
+        .lost-signal {
+            width: 12px;
+            height: 12px;
+            background: #ff3b6f;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #ff3b6f;
+            animation: pulseLost 1.8s infinite;
+        }
+
+        @keyframes pulseLost {
+            0%, 100% { opacity: 0.5; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.3); box-shadow: 0 0 25px #ff3b6f; }
+        }
+
+        /* ---------- ВИЗУАЛИЗАЦИЯ "БИТЫЙ ПРОТОКОЛ" ---------- */
+        .glitch-art {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: rgba(199,125,255,0.5);
+            margin: 1.8rem 0;
+            letter-spacing: 6px;
+            word-break: break-all;
+            white-space: pre-wrap;
+            max-width: 100%;
+            user-select: none;
+            animation: glitchText 4s infinite;
+        }
+
+        @keyframes glitchText {
+            0% { opacity: 0.5; transform: translateX(0); }
+            10% { opacity: 0.7; transform: translateX(-3px); }
+            20% { opacity: 0.4; transform: translateX(3px); }
+            30% { opacity: 0.8; transform: translateX(0); }
+            100% { opacity: 0.5; }
+        }
+
+        /* ---------- КНОПКА ВОЗВРАТА (NEON) ---------- */
+        .button-group {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 2.2rem;
+            flex-wrap: wrap;
+        }
+
+        .neon-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1.5px solid var(--neon-cyan);
+            color: white;
+            padding: 0.9rem 2.5rem;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            backdrop-filter: blur(4px);
+            transition: var(--transition);
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0,247,255,0.3);
+            text-decoration: none;
+            border: none;
+            background: rgba(0,247,255,0.08);
+            border: 1px solid var(--neon-cyan);
+        }
+
+        .neon-btn:hover {
+            background: var(--neon-cyan);
+            color: #000;
+            border-color: white;
+            box-shadow: 0 0 40px var(--neon-cyan);
+            transform: scale(1.05);
+        }
+
+        .neon-btn i {
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .neon-btn:hover i {
+            transform: translateX(-8px);
+            color: #000;
+        }
+
+        .outline-btn {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--neon-purple);
+            color: white;
+            box-shadow: 0 0 15px rgba(199,125,255,0.2);
+        }
+
+        .outline-btn:hover {
+            background: var(--neon-purple);
+            border-color: white;
+            box-shadow: 0 0 40px var(--neon-purple);
+        }
+
+        /* ---------- ПОДВАЛ ---------- */
+        .error-footer {
+            margin-top: 3.5rem;
+            color: var(--text-soft);
+            font-size: 0.9rem;
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            border-top: 1px solid rgba(0,247,255,0.1);
+            padding-top: 2rem;
+            width: 100%;
+        }
+
+        .error-footer span i {
+            color: var(--neon-pink);
+            margin-right: 0.5rem;
+        }
+
+        /* ---------- АНИМАЦИИ ---------- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ---------- АДАПТАЦИЯ ---------- */
+        @media (max-width: 700px) {
+            .error-container { padding: 2.5rem 1.5rem; border-radius: 40px; }
+            .button-group { flex-direction: column; align-items: stretch; }
+            .neon-btn { justify-content: center; }
+        }
+
+        @media (max-width: 480px) {
+            .error-code { font-size: 6rem; }
+            .error-title { font-size: 1.8rem; }
+        }
+
+        /* ---------- ДОПОЛНИТЕЛЬНЫЙ СТИЛЬ ДЛЯ ПОДДЕРЖКИ "ЖИВОГО" ---------- */
+        .pill {
+            background: rgba(255,94,156,0.1);
+            border: 1px solid var(--neon-pink);
+            border-radius: 60px;
+            padding: 0.2rem 1.2rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--neon-pink);
+            display: inline-block;
+            margin-left: 0.6rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- ЧАСТИЦЫ И СЕТКА (как на главной и in-dev) -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+    <div class="tech-grid"></div>
+
+    <main>
+        <!-- ЦЕНТРАЛЬНЫЙ БЛОК 404 -->
+        <section class="error-container">
+            <!-- крупный неоновый код ошибки -->
+            <div class="error-code">404</div>
+
+            <!-- статус сигнала: потерян -->
+            <div class="signal-status">
+                <span class="lost-signal"></span>
+                <span>сигнал потерян · протокол не найден</span>
+                <i class="fas fa-satellite-dish"></i>
+            </div>
+
+            <!-- заголовок с иконкой -->
+            <div class="error-title">
+                <i class="fas fa-map-pin"></i> 
+                запрос не может быть обработан
+                <span class="pill">in dev?</span>
+            </div>
+
+            <!-- текст ошибки — философский, в духе Axis -->
+            <div class="error-message">
+                <strong>⸻ ˗ ˗ ˗ ˗ ˗</strong><br>
+                Этой страницы пока нет в нашей сети. Возможно, она ещё в разработке,<br> 
+                или вы перешли по битой ссылке. В мире Axis даже ошибки — часть пути.
+            </div>
+
+            <!-- визуальный элемент «бинарный шум» -->
+            <div class="glitch-art">
+                00110011 01010100 01101100 01110011 01111001 00101110 00101110 00101110
+            </div>
+
+            <!-- кнопки возврата -->
+            <div class="button-group">
+                <a href="index.html" class="neon-btn">
+                    <i class="fas fa-arrow-left"></i> 
+                    на главную
+                </a>
+                <a href="in-dev.html" class="neon-btn outline-btn">
+                    <i class="fas fa-code-branch"></i>
+                    карта разработки
+                </a>
+            </div>
+
+            <!-- дополнительный намёк: возможно, это не ошибка, а фича -->
+            <div style="margin-top: 2.2rem; font-size: 0.9rem; color: rgba(192,212,221,0.7);">
+                <i class="fas fa-shield-halbed"></i> код состояния: 404 — намеренно или случайно?
+            </div>
+        </section>
+
+        <!-- ПОДВАЛ В СТИЛЕ AXIS -->
+        <footer class="error-footer">
+            <span><i class="fas fa-cube"></i> Axis · протокол версии 0.2.6-alpha</span>
+            <span><i class="fas fa-clock"></i> время запроса: потеряно</span>
+            <span><i class="fas fa-globe"></i> сигнал: offline</span>
+        </footer>
+    </main>
+
+    <!-- ПАРАЛЛАКС ДЛЯ ЧАСТИЦ (живое движение) -->
+    <script>
+        (function() {
+            document.addEventListener('mousemove', function(e) {
+                const particles = document.querySelectorAll('.particle');
+                const x = (e.clientX / window.innerWidth - 0.5) * 20;
+                const y = (e.clientY / window.innerHeight - 0.5) * 20;
+                particles.forEach((p, index) => {
+                    p.style.transform = `translate(${x * (index%3 + 1)}px, ${y * (index%3 + 1)}px)`;
+                });
+            });
+
+            // Небольшой эффект глитча для .glitch-art при наведении
+            const glitchEl = document.querySelector('.glitch-art');
+            if (glitchEl) {
+                glitchEl.addEventListener('mouseenter', () => {
+                    glitchEl.style.animation = 'none';
+                    glitchEl.offsetHeight;
+                    glitchEl.style.animation = 'glitchText 0.3s infinite';
+                });
+                glitchEl.addEventListener('mouseleave', () => {
+                    glitchEl.style.animation = 'glitchText 4s infinite';
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

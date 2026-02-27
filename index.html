@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axis · переосмысление общения</title>
+    <!-- Современные шрифты -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ---------- СБРОС И ПЕРЕМЕННЫЕ ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0c0f;
+            --bg-deep: #050708;
+            --neon-cyan: #00f0ff;
+            --neon-purple: #b300ff;
+            --neon-pink: #ff3b9e;
+            --glass-bg: rgba(10, 20, 30, 0.6);
+            --glass-border: rgba(0, 240, 255, 0.25);
+            --text-primary: #f0f5fa;
+            --text-secondary: #b0c4ce;
+            --font-hero: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 15% 30%, rgba(0, 240, 255, 0.08) 0%, transparent 35%),
+                radial-gradient(circle at 85% 70%, rgba(179, 0, 255, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 40% 80%, rgba(255, 59, 158, 0.06) 0%, transparent 45%);
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ---------- ПРЕЛОАДЕР (ПОВЕРХ ВСЕГО) ---------- */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #030608;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0,247,255,0.1) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(199,125,255,0.08) 0%, transparent 45%),
+                radial-gradient(circle at 40% 90%, rgba(255,94,156,0.06) 0%, transparent 50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        .preloader-hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .preloader-content {
+            text-align: center;
+            animation: fadeInUp 1s ease;
+        }
+
+        .preloader-logo {
+            font-family: var(--font-hero);
+            font-size: clamp(5rem, 15vw, 8rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: white;
+            text-shadow: 
+                0 0 20px var(--neon-cyan),
+                0 0 40px var(--neon-cyan),
+                0 0 80px var(--neon-purple),
+                0 0 120px rgba(179, 0, 255, 0.6);
+            animation: pulseLogo 2.2s infinite alternate;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes pulseLogo {
+            0% { text-shadow: 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-cyan), 0 0 60px var(--neon-purple), 0 0 100px rgba(179,0,255,0.5); }
+            100% { text-shadow: 0 0 30px var(--neon-cyan), 0 0 70px var(--neon-cyan), 0 0 100px var(--neon-purple), 0 0 150px rgba(179,0,255,0.8); }
+        }
+
+        .preloader-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            font-size: 1.4rem;
+            color: var(--neon-cyan);
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .preloader-dot {
+            width: 14px;
+            height: 14px;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--neon-cyan);
+            animation: preloaderPulse 1.6s infinite;
+        }
+
+        @keyframes preloaderPulse {
+            0%, 100% { opacity: 0.6; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.3); box-shadow: 0 0 30px var(--neon-cyan); }
+        }
+
+        .preloader-sub {
+            margin-top: 2rem;
+            color: rgba(192,212,221,0.8);
+            font-size: 1.1rem;
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .preloader-sub i {
+            color: var(--neon-pink);
+            animation: spin 4s infinite linear;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* ---------- АНИМИРОВАННЫЙ ФОН (ЧАСТИЦЫ) ---------- */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(0, 240, 255, 0.5);
+            border-radius: 50%;
+            box-shadow: 0 0 15px #00f0ff, 0 0 30px #00a6ff;
+            animation: float 20s infinite linear;
+        }
+
+        .particle:nth-child(1) { top: 20%; left: 10%; width: 3px; height: 3px; animation-duration: 24s; }
+        .particle:nth-child(2) { top: 70%; left: 80%; width: 2px; height: 2px; animation-duration: 30s; animation-delay: 2s; background: var(--neon-purple); box-shadow: 0 0 20px #b300ff; }
+        .particle:nth-child(3) { top: 45%; left: 30%; width: 4px; height: 4px; animation-duration: 28s; animation-delay: 5s; background: var(--neon-pink); box-shadow: 0 0 25px #ff3b9e; }
+        .particle:nth-child(4) { top: 15%; left: 70%; width: 2px; height: 2px; animation-duration: 22s; animation-delay: 1s; }
+        .particle:nth-child(5) { top: 85%; left: 20%; width: 3px; height: 3px; animation-duration: 26s; animation-delay: 4s; }
+        .particle:nth-child(6) { top: 55%; left: 60%; width: 2px; height: 2px; animation-duration: 35s; animation-delay: 7s; background: var(--neon-purple); }
+        .particle:nth-child(7) { top: 30%; left: 90%; width: 3px; height: 3px; animation-duration: 32s; animation-delay: 3s; background: var(--neon-pink); }
+        .particle:nth-child(8) { top: 95%; left: 50%; width: 2px; height: 2px; animation-duration: 29s; animation-delay: 6s; }
+        .particle:nth-child(9) { top: 10%; left: 45%; width: 4px; height: 4px; animation-duration: 27s; animation-delay: 8s; }
+        .particle:nth-child(10) { top: 65%; left: 15%; width: 2px; height: 2px; animation-duration: 31s; animation-delay: 2s; }
+
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-120vh) translateX(20px); opacity: 0; }
+        }
+
+        /* ---------- ДЕКОРАТИВНАЯ СЕТКА ---------- */
+        .grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 0;
+            pointer-events: none;
+            animation: gridMove 40s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+
+        /* ---------- ОСНОВНОЙ КОНТЕНТ (ИЗНАЧАЛЬНО СКРЫТ) ---------- */
+        .main-content {
+            position: relative;
+            z-index: 10;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            backdrop-filter: blur(1px);
+            opacity: 0;
+            transition: opacity 1.2s ease;
+        }
+
+        .main-content-visible {
+            opacity: 1;
+        }
+
+        /* ---------- ГЕРОЙ ---------- */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 2rem;
+            margin-bottom: 3rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 48px;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+            animation: fadeInUp 1.2s ease;
+            transition: var(--transition);
+        }
+
+        .hero:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.3);
+        }
+
+        .hero h1 {
+            font-family: var(--font-hero);
+            font-size: clamp(4rem, 15vw, 8rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin: 0;
+            line-height: 1;
+            color: white;
+            text-shadow: 
+                0 0 10px var(--neon-cyan),
+                0 0 20px var(--neon-cyan),
+                0 0 40px var(--neon-purple),
+                0 0 80px rgba(179, 0, 255, 0.6);
+            animation: flicker 5s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff, 0 0 40px #b300ff, 0 0 80px rgba(179,0,255,0.6); }
+            20%, 24%, 55% { opacity: 0.8; text-shadow: 0 0 5px #00f0ff, 0 0 10px #00f0ff, 0 0 20px #b300ff, 0 0 40px rgba(179,0,255,0.4); }
+        }
+
+        .dev-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            padding: 0.6rem 1.8rem;
+            border-radius: 60px;
+            border: 1px solid rgba(0, 240, 255, 0.5);
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            color: var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+        }
+
+        .dev-badge i {
+            font-size: 1.4rem;
+            animation: spin 4s infinite linear;
+        }
+
+        .pulse-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--neon-cyan);
+            animation: pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.3); box-shadow: 0 0 20px var(--neon-cyan); }
+        }
+
+        .hero p {
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 1.5rem 0 2rem;
+            font-weight: 300;
+            backdrop-filter: blur(2px);
+        }
+
+        .hero p strong {
+            color: white;
+            font-weight: 600;
+            text-shadow: 0 0 8px rgba(0,240,255,0.6);
+        }
+
+        .neon-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1.5px solid var(--neon-cyan);
+            color: white;
+            padding: 0.9rem 2.5rem;
+            border-radius: 60px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            backdrop-filter: blur(4px);
+            transition: var(--transition);
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0,240,255,0.3);
+            text-decoration: none;
+            margin-top: 1rem;
+        }
+
+        .neon-btn:hover {
+            background: var(--neon-cyan);
+            color: #000;
+            border-color: white;
+            box-shadow: 0 0 40px var(--neon-cyan);
+            transform: scale(1.05);
+        }
+
+        .neon-btn i {
+            font-size: 1.4rem;
+            transition: var(--transition);
+        }
+
+        .neon-btn:hover i {
+            transform: translateX(8px);
+            color: #000;
+        }
+
+        /* ---------- БЛОК ЦИТАТЫ ---------- */
+        .quote-block {
+            background: rgba(5, 10, 18, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(179, 0, 255, 0.4);
+            border-radius: 36px;
+            padding: 3rem 3.5rem;
+            margin: 3rem 0 2rem;
+            position: relative;
+            box-shadow: 0 0 40px rgba(179, 0, 255, 0.15);
+            transition: var(--transition);
+            animation: fadeInUp 1.4s ease;
+        }
+
+        .quote-block:hover {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 70px rgba(179, 0, 255, 0.3);
+            background: rgba(8, 15, 25, 0.75);
+        }
+
+        .quote-icon {
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            font-size: 5rem;
+            color: rgba(179, 0, 255, 0.2);
+            font-family: serif;
+            line-height: 1;
+            user-select: none;
+        }
+
+        .quote-block p {
+            font-size: clamp(1.3rem, 5vw, 1.9rem);
+            font-weight: 300;
+            font-style: italic;
+            color: #e0e8f0;
+            line-height: 1.6;
+            position: relative;
+            z-index: 2;
+            padding-left: 2rem;
+            border-left: 4px solid var(--neon-purple);
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        .quote-footer {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1rem;
+            color: var(--neon-purple);
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .quote-footer i {
+            font-size: 1.4rem;
+            opacity: 0.8;
+        }
+
+        .axis-dev-label {
+            display: inline-block;
+            background: rgba(179, 0, 255, 0.2);
+            padding: 0.4rem 1.6rem;
+            border-radius: 40px;
+            border: 1px solid var(--neon-purple);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: white;
+            margin-top: 1rem;
+            backdrop-filter: blur(4px);
+        }
+
+        /* ---------- ПОДВАЛ ---------- */
+        footer {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 2.5rem 0.5rem 1rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            border-top: 1px solid rgba(0, 240, 255, 0.15);
+            margin-top: 2rem;
+            backdrop-filter: blur(5px);
+        }
+
+        footer i {
+            color: var(--neon-pink);
+            margin: 0 6px;
+            animation: heartbeat 1.8s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* ---------- АНИМАЦИИ ПОЯВЛЕНИЯ ---------- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ---------- АДАПТАЦИЯ ---------- */
+        @media (max-width: 768px) {
+            .main-content { padding: 1rem; }
+            .hero { padding: 2rem 1.5rem; border-radius: 32px; }
+            .quote-block { padding: 2rem 1.5rem; }
+            .quote-block p { padding-left: 1rem; font-size: 1.2rem; }
+            .neon-btn { padding: 0.7rem 1.8rem; font-size: 1rem; }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 4.5rem; }
+            .dev-badge { font-size: 1rem; padding: 0.4rem 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ПРЕЛОАДЕР -->
+    <div id="preloader" class="preloader">
+        <div class="preloader-content">
+            <div class="preloader-logo">Axis</div>
+            <div class="preloader-status">
+                <span class="preloader-dot"></span>
+                <span>загрузка протокола</span>
+                <span class="preloader-dot"></span>
+            </div>
+            <div class="preloader-sub">
+                <i class="fas fa-code-branch"></i>
+                <span>in dev...</span>
+                <i class="fas fa-code-branch"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЧАСТИЦЫ (фон) -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+    <div class="grid-lines"></div>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ (ИЗНАЧАЛЬНО СКРЫТ) -->
+    <main id="main-content" class="main-content">
+        <section class="hero">
+            <h1>Axis</h1>
+            <div class="dev-badge">
+                <span class="pulse-dot"></span>
+                <span>in dev...</span>
+                <i class="fas fa-code-branch"></i>
+            </div>
+            <p>
+                <strong>Мессенджер,</strong> который возможно изменит будущее.
+            </p>
+            <a href="in-dev.html" class="neon-btn">
+                <span>Стать первым</span>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </section>
+
+        <section class="quote-block">
+            <div class="quote-icon">“</div>
+            <p>
+                «Кажется, будто право выбирать подменяется предложением чего-то, что можно охарактеризовать лишь как говно, совершенно не вписывающееся в нормальную жизнь... Создается впечатление, что Россию аккуратно, шаг за шагом, адаптируют под реалии, свойственные Северной Корее.»
+            </p>
+            <div class="quote-footer">
+                <i class="fas fa-user-secret"></i>
+                <span>из дневников разработчика</span>
+            </div>
+            <div class="axis-dev-label">
+                <i class="fas fa-cogs"></i> Axis in dev...
+            </div>
+        </section>
+
+        <footer>
+            <p>
+                <i class="fas fa-bolt"></i> Axis — прототип будущего мессенджера <i class="fas fa-bolt"></i>
+            </p>
+            <p style="margin-top: 0.8rem; opacity: 0.7; font-size: 0.85rem;">
+                © 2025, переосмысление коммуникации
+            </p>
+        </footer>
+    </main>
+
+    <script>
+        (function() {
+            // ПАРАЛЛАКС ДЛЯ ЧАСТИЦ
+            function initParallax() {
+                document.addEventListener('mousemove', function(e) {
+                    const particles = document.querySelectorAll('.particle');
+                    const x = (e.clientX / window.innerWidth - 0.5) * 20;
+                    const y = (e.clientY / window.innerHeight - 0.5) * 20;
+                    particles.forEach((p, index) => {
+                        p.style.transform = `translate(${x * (index%3 + 1)}px, ${y * (index%3 + 1)}px)`;
+                    });
+                });
+            }
+
+            // УПРАВЛЕНИЕ ПРЕЛОАДЕРОМ
+            function initPreloader() {
+                const preloader = document.getElementById('preloader');
+                const mainContent = document.getElementById('main-content');
+
+                // Минимальное время показа прелоадера — 2 секунды (для комфортного восприятия)
+                const minDisplayTime = 2000; // 2 секунды
+                const startTime = Date.now();
+
+                function hidePreloader() {
+                    const elapsed = Date.now() - startTime;
+                    const delay = Math.max(0, minDisplayTime - elapsed);
+
+                    setTimeout(() => {
+                        preloader.classList.add('preloader-hidden');
+                        mainContent.classList.add('main-content-visible');
+                    }, delay);
+                }
+
+                // Ждём полной загрузки страницы + ещё чуть-чуть
+                window.addEventListener('load', hidePreloader);
+
+                // На случай, если load уже произошёл (маловероятно, но добавим fallback)
+                if (document.readyState === 'complete') {
+                    hidePreloader();
+                }
+            }
+
+            initParallax();
+            initPreloader();
+        })();
+    </script>
+</body>
+</html>

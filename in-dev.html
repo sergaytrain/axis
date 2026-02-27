@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axis · status: in-dev</title>
+    <!-- Modern fonts & icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ----- RESET & VARIABLES ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-deep: #080b0e;
+            --bg-panel: rgba(12, 20, 28, 0.7);
+            --neon-cyan: #00f7ff;
+            --neon-purple: #c77dff;
+            --neon-pink: #ff5e9c;
+            --glass-edge: rgba(0, 247, 255, 0.25);
+            --text-bright: #f0fcff;
+            --text-soft: #c0d4dd;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-main: 'Inter', sans-serif;
+            --transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1);
+        }
+
+        body {
+            background-color: #030608;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0,247,255,0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 70%, rgba(199,125,255,0.08) 0%, transparent 45%),
+                radial-gradient(circle at 40% 85%, rgba(255,94,156,0.06) 0%, transparent 50%);
+            font-family: var(--font-main);
+            color: var(--text-bright);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ----- ANIMATED PARTICLES (SAME DNA) ----- */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--neon-cyan), 0 0 30px #0099ff;
+            animation: drift 22s infinite linear;
+            opacity: 0.4;
+        }
+
+        .particle:nth-child(1) { top: 15%; left: 8%; width: 4px; height: 4px; animation-duration: 26s; }
+        .particle:nth-child(2) { top: 80%; left: 75%; background: var(--neon-purple); box-shadow: 0 0 25px var(--neon-purple); animation-duration: 30s; animation-delay: 3s; }
+        .particle:nth-child(3) { top: 45%; left: 25%; background: var(--neon-pink); box-shadow: 0 0 25px var(--neon-pink); animation-duration: 28s; animation-delay: 1s; }
+        .particle:nth-child(4) { top: 70%; left: 15%; animation-duration: 35s; }
+        .particle:nth-child(5) { top: 25%; left: 85%; background: var(--neon-purple); animation-duration: 32s; animation-delay: 5s; }
+        .particle:nth-child(6) { top: 90%; left: 45%; background: var(--neon-pink); animation-duration: 29s; }
+        .particle:nth-child(7) { top: 10%; left: 55%; animation-duration: 40s; }
+        .particle:nth-child(8) { top: 60%; left: 92%; width: 2px; height: 2px; animation-duration: 33s; }
+        .particle:nth-child(9) { top: 35%; left: 40%; width: 4px; height: 4px; animation-duration: 27s; }
+        .particle:nth-child(10) { top: 50%; left: 60%; animation-duration: 38s; }
+
+        @keyframes drift {
+            0% { transform: translateY(0) translateX(0); opacity: 0.1; }
+            20% { opacity: 0.7; }
+            80% { opacity: 0.5; }
+            100% { transform: translateY(-120vh) translateX(30px); opacity: 0; }
+        }
+
+        /* ----- HEX GRID (TECH OVERLAY) ----- */
+        .tech-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0,247,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,247,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* ----- MAIN CONTENT (HIGH Z-INDEX) ----- */
+        main {
+            position: relative;
+            z-index: 20;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 2rem 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+            backdrop-filter: blur(2px);
+        }
+
+        /* ----- HEADER / STATUS BAR ----- */
+        .dev-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 2.2rem;
+            background: rgba(5, 12, 18, 0.65);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(0,247,255,0.3);
+            border-radius: 100px;
+            box-shadow: 0 0 30px rgba(0,247,255,0.1);
+            animation: slideDown 0.9s ease;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .axis-logo {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: white;
+            text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0,247,255,0.08);
+            padding: 0.5rem 1.5rem;
+            border-radius: 60px;
+            border: 1px solid var(--neon-cyan);
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--neon-cyan);
+        }
+
+        .pulse {
+            width: 12px;
+            height: 12px;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--neon-cyan);
+            animation: pulse-anim 1.8s infinite;
+        }
+
+        @keyframes pulse-anim {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.3); box-shadow: 0 0 25px var(--neon-cyan); }
+        }
+
+        .build-info {
+            display: flex;
+            gap: 2rem;
+            color: var(--text-soft);
+            font-size: 0.95rem;
+        }
+
+        .build-info i {
+            margin-right: 0.4rem;
+            color: var(--neon-pink);
+        }
+
+        /* ----- HERO SECTION (IN DEV TITLE) ----- */
+        .hero-dev {
+            text-align: center;
+            padding: 2rem 0 1rem;
+        }
+
+        .hero-dev h1 {
+            font-family: var(--font-display);
+            font-size: clamp(3.5rem, 12vw, 7rem);
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 0 20px var(--neon-purple), 0 0 40px rgba(199,125,255,0.5);
+            line-height: 1.1;
+            animation: glowPulse 3s infinite alternate;
+        }
+
+        @keyframes glowPulse {
+            0% { text-shadow: 0 0 15px var(--neon-purple), 0 0 35px rgba(199,125,255,0.5); }
+            100% { text-shadow: 0 0 30px var(--neon-purple), 0 0 60px rgba(199,125,255,0.8); }
+        }
+
+        .hero-dev .sub {
+            font-size: 1.5rem;
+            color: var(--text-soft);
+            max-width: 700px;
+            margin: 1rem auto 0;
+            font-weight: 300;
+            backdrop-filter: blur(4px);
+        }
+
+        /* ----- DEV DASHBOARD (CARDS) ----- */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.8rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: rgba(8, 18, 26, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0,247,255,0.18);
+            border-radius: 32px;
+            padding: 2rem 1.8rem;
+            transition: var(--transition);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 40px rgba(0,247,255,0.2);
+            transform: translateY(-6px);
+            background: rgba(12, 25, 35, 0.7);
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--neon-cyan), var(--neon-purple));
+            opacity: 0.6;
+        }
+
+        .card i {
+            font-size: 2.5rem;
+            color: var(--neon-cyan);
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 15px var(--neon-cyan);
+        }
+
+        .card h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            font-family: var(--font-display);
+        }
+
+        .progress {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin: 1.5rem 0 1rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+            border-radius: 10px;
+            width: 0%;
+            transition: width 1.2s ease;
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            color: var(--text-soft);
+            margin-top: 0.8rem;
+        }
+
+        .stat-label i {
+            font-size: 0.9rem;
+            margin-right: 0.4rem;
+            color: var(--neon-pink);
+        }
+
+        /* ----- ROADMAP (TIMELINE) ----- */
+        .roadmap {
+            background: rgba(5, 14, 20, 0.65);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(199,125,255,0.3);
+            border-radius: 40px;
+            padding: 2.5rem 2.8rem;
+            margin-top: 1rem;
+        }
+
+        .roadmap h2 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            font-family: var(--font-display);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .roadmap h2 i {
+            color: var(--neon-purple);
+            text-shadow: 0 0 15px var(--neon-purple);
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .milestone {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.8rem;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(199,125,255,0.15);
+        }
+
+        .milestone:last-child {
+            border-bottom: none;
+        }
+
+        .milestone-date {
+            min-width: 110px;
+            font-weight: 700;
+            color: var(--neon-pink);
+            text-shadow: 0 0 5px rgba(255,94,156,0.5);
+            font-size: 1.1rem;
+        }
+
+        .milestone-content {
+            flex: 1;
+        }
+
+        .milestone-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            color: white;
+        }
+
+        .milestone-desc {
+            color: var(--text-soft);
+            font-size: 0.95rem;
+        }
+
+        .milestone-tag {
+            background: rgba(0,247,255,0.1);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 30px;
+            padding: 0.2rem 1.2rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-left: 1rem;
+        }
+
+        /* ----- DEV TEASER / QUOTE (сохраняем дух предыдущей страницы) ----- */
+        .dev-quote {
+            margin: 2rem 0 1rem;
+            padding: 2rem 2.5rem;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            border-left: 6px solid var(--neon-pink);
+            border-radius: 24px;
+            font-style: italic;
+            color: #d0e0ea;
+            font-size: 1.25rem;
+            box-shadow: 0 0 40px rgba(255,94,156,0.1);
+            transition: var(--transition);
+        }
+
+        .dev-quote:hover {
+            border-left-color: var(--neon-cyan);
+            box-shadow: 0 0 60px rgba(0,247,255,0.15);
+        }
+
+        .dev-quote i {
+            color: var(--neon-pink);
+            margin-right: 0.6rem;
+        }
+
+        /* ----- FOOTER ----- */
+        .dev-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.8rem 0.5rem 0.8rem;
+            border-top: 1px solid rgba(0,247,255,0.15);
+            margin-top: 2rem;
+            color: var(--text-soft);
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+
+        .build-id {
+            font-family: monospace;
+            background: rgba(0,247,255,0.05);
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            border: 1px solid rgba(0,247,255,0.2);
+        }
+
+        .social-links i {
+            margin-left: 1.2rem;
+            font-size: 1.2rem;
+            color: var(--text-soft);
+            transition: var(--transition);
+        }
+
+        .social-links i:hover {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 15px var(--neon-cyan);
+            transform: scale(1.2);
+        }
+
+        /* ----- ANIMATIONS ----- */
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ----- RESPONSIVE ----- */
+        @media (max-width: 800px) {
+            main { padding: 1.2rem; }
+            .dev-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .build-info { width: 100%; justify-content: space-between; }
+            .roadmap { padding: 1.8rem; }
+            .milestone { flex-direction: column; gap: 0.5rem; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-dev h1 { font-size: 3.2rem; }
+            .card { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Живой фон — частицы и сетка -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+    <div class="tech-grid"></div>
+
+    <main>
+        <!-- ХЕДЕР С ИНФОРМАЦИЕЙ О БИЛДЕ -->
+        <header class="dev-header">
+            <div class="logo-area">
+                <span class="axis-logo">AXIS</span>
+                <span class="status-badge">
+                    <span class="pulse"></span>
+                    in-dev
+                </span>
+            </div>
+            <div class="build-info">
+                <span><i class="fas fa-code-branch"></i> dev/0.2.6-alpha</span>
+                <span><i class="fas fa-clock"></i> последний коммит: 12 фев 21:47</span>
+                <span><i class="fas fa-database"></i> core: 0.4.1</span>
+            </div>
+        </header>
+
+        <!-- ГЛАВНЫЙ ЭКРАН: in dev -->
+        <section class="hero-dev">
+            <h1>// in-dev phase</h1>
+            <div class="sub">
+                мы пересобираем коммуникацию с нуля. прототип уже дышит.
+            </div>
+        </section>
+
+        <!-- ДЭШБОРД РАЗРАБОТКИ — ПРОГРЕСС ПО МОДУЛЯМ -->
+        <section class="dashboard">
+            <!-- Карточка 1: Ядро -->
+            <div class="card">
+                <i class="fas fa-cube"></i>
+                <h3>Core engine</h3>
+                <p style="color: var(--text-soft); margin-bottom: 1.2rem;">Криптография, P2P, синхронизация</p>
+                <div class="progress">
+                    <div class="progress-bar" style="width: 68%;"></div>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label"><i class="fas fa-check-circle"></i> готовность</span>
+                    <span style="color: var(--neon-cyan); font-weight: 600;">68%</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label"><i class="fas fa-bug"></i> открыто багов</span>
+                    <span>14</span>
+                </div>
+            </div>
+            <!-- Карточка 2: Интерфейс -->
+            <div class="card">
+                <i class="fas fa-paint-brush"></i>
+                <h3>UI/UX</h3>
+                <p style="color: var(--text-soft); margin-bottom: 1.2rem;">Адаптивный дизайн, микроанимации</p>
+                <div class="progress">
+                    <div class="progress-bar" style="width: 53%; background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));"></div>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label"><i class="fas fa-check-circle"></i> готовность</span>
+                    <span style="color: var(--neon-purple); font-weight: 600;">53%</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label"><i class="fas fa-palette"></i> экранов</span>
+                    <span>11/24</span>
+                </div>
+            </div>
+            <!-- Карточка 3: Сеть -->
+            <div class="card">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Security & Mesh</h3>
+                <p style="color: var(--text-soft); margin-bottom: 1.2rem;">Шифрование, децентрализация</p>
+                <div class="progress">
+                    <div class="progress-bar" style="width: 41%; background: linear-gradient(90deg, var(--neon-pink), #ffaa3b);"></div>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label"><i class="fas fa-check-circle"></i> готовность</span>
+                    <span style="color: var(--neon-pink); font-weight: 600;">41%</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label"><i class="fas fa-node"></i> ноды тестнета</span>
+                    <span>7</span>
+                </div>
+            </div>
+            <!-- Карточка 4: Протокол -->
+            <div class="card">
+                <i class="fas fa-code"></i>
+                <h3>API / Протокол</h3>
+                <p style="color: var(--text-soft); margin-bottom: 1.2rem;">Документация, webhooks</p>
+                <div class="progress">
+                    <div class="progress-bar" style="width: 27%;"></div>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label"><i class="fas fa-check-circle"></i> готовность</span>
+                    <span style="color: var(--neon-cyan); font-weight: 600;">27%</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label"><i class="fas fa-file-alt"></i> методов</span>
+                    <span>18/62</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ДОРОЖНАЯ КАРТА (ROADMAP) -->
+        <section class="roadmap">
+            <h2>
+                <i class="fas fa-map-signs"></i>
+                дорожная карта
+            </h2>
+            <div class="timeline">
+                <div class="milestone">
+                    <div class="milestone-date">Q1 2025</div>
+                    <div class="milestone-content">
+                        <div class="milestone-title">alpha · закрытое тестирование</div>
+                        <div class="milestone-desc">P2P-чат, базовые комнаты, E2E-шифрование (группы до 10 чел). Доступ по инвайтам.</div>
+                    </div>
+                    <span class="milestone-tag" style="border-color: var(--neon-cyan);">в работе</span>
+                </div>
+                <div class="milestone">
+                    <div class="milestone-date">Q3 2025</div>
+                    <div class="milestone-content">
+                        <div class="milestone-title">beta · публичный тестнет</div>
+                        <div class="milestone-desc">Файловое хранилище, голосовые комнаты, модерация на основе репутации.</div>
+                    </div>
+                    <span class="milestone-tag" style="border-color: var(--neon-purple);">план</span>
+                </div>
+                <div class="milestone">
+                    <div class="milestone-date">Q1 2026</div>
+                    <div class="milestone-content">
+                        <div class="milestone-title">v1.0 · mainnet</div>
+                        <div class="milestone-desc">Децентрализованные каналы, плагины, SDK, полная анонимность по желанию.</div>
+                    </div>
+                    <span class="milestone-tag">релиз</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ЦИТАТА / ДЕВИЗ (перекликается с духом Axis) -->
+        <div class="dev-quote">
+            <i class="fas fa-quote-left"></i> 
+            «Мы не строим очередной мессенджер. Мы даём людям право на приватность и свободу от алгоритмических лент. In dev — это только начало».
+        </div>
+
+        <!-- ПОДВАЛ С БИЛДОМ И СОЦСЕТЯМИ -->
+        <footer class="dev-footer">
+            <span class="build-id">
+                <i class="fas fa-microchip"></i> axis-in-dev@0.2.6-alpha
+            </span>
+            <span>
+                © 2025 Axis · переосмысление общения
+            </span>
+            <span class="social-links">
+                <i class="fab fa-github"></i>
+                <i class="fab fa-discord"></i>
+                <i class="fas fa-envelope"></i>
+            </span>
+        </footer>
+    </main>
+
+    <!-- МИКРО-ПАРАЛЛАКС (ещё больше жизни) -->
+    <script>
+        (function() {
+            document.addEventListener('mousemove', function(e) {
+                const particles = document.querySelectorAll('.particle');
+                const x = (e.clientX / window.innerWidth - 0.5) * 20;
+                const y = (e.clientY / window.innerHeight - 0.5) * 20;
+                particles.forEach((p, index) => {
+                    p.style.transform = `translate(${x * (index%3 + 1)}px, ${y * (index%3 + 1)}px)`;
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
